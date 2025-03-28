@@ -73,10 +73,8 @@ public class Accounts {
     public static void overdraft() {
         Accounts overdraft = new Accounts("Overdraft", 500, 1, 10);
         accountz.add(overdraft);
-        System.out.println("\n✅ A new Overdraft account with $500 has been created!");
-        System.out.println();
+        System.out.println("\n✅ A new Overdraft account with $500 has been created!\n");
 
-        // Display payment information
         System.out.println("1. Monthly Repayment (With Interest):");
         System.out.println("Monthly Payment: $47.50");
 
@@ -96,10 +94,8 @@ public class Accounts {
     public static void loan() {
         Accounts loan = new Accounts("Loan", 30000, 15, 5);
         accountz.add(loan);
-        System.out.println("\n✅ A new Loan account with $30,000 has been created!");
-        System.out.println();
+        System.out.println("\n✅ A new Loan account with $30,000 has been created!\n");
 
-        // Display payment information
         System.out.println("1. Monthly Repayment (With Interest):");
         System.out.println("Monthly Payment: $237.22");
 
@@ -134,9 +130,8 @@ public class Accounts {
         System.out.println("SIMULATED ACCOUNT...");
         System.out.println("How much would you like to put in your Cash ISA?");
         double isamoney = scanner.nextDouble();
-        scanner.nextLine(); // Consume the leftover newline character after nextDouble()
+        scanner.nextLine();
 
-        // Calculate interest over 5 years (annual compounding)
         double annualCompoundAmount = isamoney * Math.pow(1 + 0.10, 5);
         double oneYearAmount = isamoney * (1 + 0.10);
         double monthlyRate = 0.10 / 12;
@@ -159,9 +154,8 @@ public class Accounts {
         System.out.println("SIMULATED ACCOUNT...");
         System.out.println("How much would you like to put in your Compound Interest account?");
         double amount = scanner.nextDouble();
-        scanner.nextLine(); // Consume the leftover newline character after nextDouble()
+        scanner.nextLine();
 
-        // Compound Interest over 7 years (annual compounding)
         double compoundAmount = amount * Math.pow(1 + 0.08, 7);
 
         System.out.printf("After 7 years with Annual Compounding: $%.2f\n", compoundAmount);
@@ -172,20 +166,35 @@ public class Accounts {
      */
     public void withdraw() {
         System.out.println("\nHow much would you like to withdraw?");
-        double withdrew = scanner.nextDouble();
-        if (this.amount < withdrew) {
-            System.out.println("❌ Insufficient Funds");
-        } else {
-            this.amount -= withdrew;
-            System.out.println("✅ Your new balance is $" + this.amount);
+
+        if (!scanner.hasNextDouble()) {
+            System.out.println("❌ Invalid input. Please enter a numeric value.");
+            scanner.nextLine();
+            return;
         }
+
+        double withdrew = scanner.nextDouble();
+        scanner.nextLine();
+
+        if (withdrew <= 0) {
+            System.out.println("❌ Withdrawal amount must be greater than zero.");
+            return;
+        }
+
+        if (this.amount < withdrew) {
+            System.out.println("❌ Insufficient funds.");
+            return;
+        }
+
+        this.amount -= withdrew;
+        System.out.printf("✅ Withdrawal successful! Your new balance is $%.2f\n", this.amount);
     }
 
     /**
      * Method to transfer money between accounts.
      */
     public static void transfer() {
-        loadacc(); // Load available accounts
+        loadacc();
         System.out.println("Select an account to transfer money from:");
         int fromInput = scanner.nextInt();
         scanner.nextLine();
@@ -217,7 +226,6 @@ public class Accounts {
             return;
         }
 
-        // Perform transfer
         fromAccount.amount -= money;
         toAccount.amount += money;
 
@@ -232,7 +240,7 @@ public class Accounts {
     public static void loadacc() {
         if (accountz.isEmpty()) {
             System.out.println("❌ You need to create an account first!");
-            createacc(); // Create an account if none exists
+            createacc();
             printmenu();
         } else {
             System.out.println("\nSelect an account to use:");
@@ -269,7 +277,7 @@ public class Accounts {
                 break;
             default:
                 System.out.println("❌ Invalid choice. Please try again.");
-                createacc(); // Retry if invalid input
+                createacc();
                 break;
         }
     }
@@ -287,57 +295,43 @@ public class Accounts {
             System.out.println("3️⃣ See your overall balance");
             System.out.println("4️⃣ Exit");
             System.out.print("Enter choice: ");
-            String choice = scanner.nextLine();  // This reads the entire line
+            String choice = scanner.nextLine();
 
             switch (choice) {
                 case "1":
                     System.out.println("Would you like to: 1️⃣ Withdraw  2️⃣ Transfer?");
-                    String actionChoice = scanner.nextLine(); // Read user choice
-
+                    String actionChoice = scanner.nextLine();
                     if (actionChoice.equals("1")) {
                         loadacc();
                         System.out.println("Select an account to withdraw from:");
                         int input = scanner.nextInt();
-                        scanner.nextLine(); // Consume the leftover newline character
-
+                        scanner.nextLine();
                         if (input >= accountz.size()) {
                             System.out.println("❌ Invalid selection.");
                             continue;
                         }
-
-                        Accounts chosenAcc = accountz.get(input);
-                        chosenAcc.withdraw();
+                        accountz.get(input).withdraw();
                     } else if (actionChoice.equals("2")) {
-                        transfer(); // Transfer functionality
+                        transfer();
                     }
                     break;
-
                 case "2":
                     createacc();
                     break;
-
                 case "3":
                     double balance = 0;
-                    for (Accounts deez : accountz) {
-                        balance += deez.getAmount();
+                    for (Accounts acc : accountz) {
+                        balance += acc.getAmount();
                     }
-                    System.out.println("T0TAL AMOUNT: " + balance);
+                    System.out.println("TOTAL AMOUNT: " + balance);
                     break;
-
                 case "4":
-                    valid = false;
+                    scanner.close();
+                    System.exit(0);
                     break;
-
                 default:
                     System.out.println("❌ Invalid choice. Try again.");
             }
         }
-    }
-
-    /**
-     * Main method to start the application.
-     */
-    public static void main(String[] args) {
-        printmenu(); // Start the menu
     }
 }

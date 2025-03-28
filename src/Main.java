@@ -7,7 +7,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("==================================");
-        System.out.println("        🏦 WELCOME TO BANKX       ");
+        System.out.println("        🏦 WELCOME TO BANK0FILYA       ");
         System.out.println("==================================");
 
         String password = "";
